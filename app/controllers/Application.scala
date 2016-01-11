@@ -18,7 +18,7 @@ object Application extends Controller {
 
   val key: (RequestHeader) => String = { case rh => rh.uri }
 
-  def index = WithCacheControl { Cached(key) {
+  def index = WithCacheControl { Cached(key, 5) {
     Action {
       Ok(views.html.index("Your new application is ready."))
     }
