@@ -32,7 +32,7 @@ object Application extends Controller {
     case rh => rh.headers.get(EXPIRES).map(dateFormat.parseDateTime) match {
       case None => scala.concurrent.duration.Duration(5, scala.concurrent.duration.SECONDS)
       case Some(expires) =>
-        val expiresIn = new Duration(DateTime.now(), expires).getStandardSeconds
+        val expiresIn = Math.max(new Duration(DateTime.now(), expires).getStandardSeconds, 1)
         scala.concurrent.duration.Duration(expiresIn, scala.concurrent.duration.SECONDS)
     }
   }
