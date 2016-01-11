@@ -13,7 +13,15 @@ object Application extends Controller {
     def apply(request: RequestHeader) = {
       implicit val executionContext = play.api.libs.concurrent.Execution.defaultContext
       action(request).map { result =>
-        result.withHeaders(("Cache-Control", "max-age=123"))
+        result.header.headers.get(EXPIRES).map(dateFormat.parseDateTime) match {
+          case None => result
+          case Some(expires) =>
+            val now = DateTime.now()
+            val maxAge = new Duration(now, expires).getStandardSeconds + 1
+            result.withHeaders(
+              (CACHE_CONTROL, s"max-age=$maxAge")
+            )
+        }
       }
     }
   }
